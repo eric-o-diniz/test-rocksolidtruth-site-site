@@ -185,10 +185,10 @@
 
 
 
-<!-- Tracking Code Start -->
-<! meta pixel -->
-ok let's try again.
-<!-- Tracking Code End -->
+
+
+
+
 </head>
 <body>
     <div class="container">
@@ -224,7 +224,52 @@ ok let's try again.
 
             <p>Summary content. Lorem ipsum dolor sit amet, consectetur adipiscing elit, <span class="highlight">highlighted text</span> sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
 <!-- INJECT QUIZ HERE -->
-<script type="module">import { injectIntoGlobalHook } from "/@react-refresh";
+
+        <script>
+        async function submitQuizForm(formData) {
+          console.log('Submitting quiz form with data:', formData);
+          
+          try {
+            const submissionData = {
+              projectId: '02efe85c-215d-4f2e-97ee-c12deae32ee3',
+              userId: '36b070d6-a5db-44fc-bb51-b5c4746f30fa',
+              name: formData.get('name') || '',
+              email: formData.get('email') || '',
+              phone: formData.get('phone') || '',
+              quizAnswers: Object.fromEntries(formData.entries()),
+              timestamp: new Date().toISOString()
+            };
+            
+            console.log('Prepared submission data:', submissionData);
+            
+            const response = await fetch('/api/functions/v1/process-quiz-submission', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(submissionData)
+            });
+            
+            console.log('Response status:', response.status);
+            const result = await response.json();
+            console.log('Response data:', result);
+            
+            if (response.ok) {
+              alert('Thank you for your submission!');
+              return true;
+            } else {
+              console.error('Submission failed:', result);
+              alert('Submission failed. Please try again.');
+              return false;
+            }
+          } catch (error) {
+            console.error('Error submitting quiz:', error);
+            alert('An error occurred. Please try again.');
+            return false;
+          }
+        }
+        </script>
+      <script type="module">import { injectIntoGlobalHook } from "/@react-refresh";
 injectIntoGlobalHook(window);
 window.$RefreshReg$ = () => {};
 window.$RefreshSig$ = () => (type) => type;</script>
@@ -760,6 +805,8 @@ window.$RefreshSig$ = () => (type) => type;</script>
     </style>
 
     <script>
+        console.log('Quiz loaded with projectId:', '02efe85c-215d-4f2e-97ee-c12deae32ee3', 'userId:', '36b070d6-a5db-44fc-bb51-b5c4746f30fa');
+        
         (function() {
             let quizCurrentStep = 1;
             const quizTotalSteps = 7;
