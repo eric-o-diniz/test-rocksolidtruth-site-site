@@ -187,6 +187,7 @@
 
 
 
+
 </head>
 <body>
     <div class="container">
@@ -211,7 +212,7 @@
             <div class="byline">By Eric D. | Updated <span id="dynamicDate"></span></div>
             
             <!-- Single Image Placeholder for simple-news-article -->
-            <img src="https://rocksolid.news/images/shingle-roof-hole.jpg" alt="Image" class="article-img-top">
+            <img src="https://rocksolid.news/images/tile-roof-hole.jpg" alt="Image" class="article-img-top">
             <!-- END OF IMAGE PLACEHOLDER -->
 
             <p>Paragraph content. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
@@ -991,19 +992,142 @@ window.$RefreshSig$ = () => (type) => type;</script>
       
       if (response.ok) {
         console.log('Quiz submission successful');
-        alert('Thank you for your submission! We will be in touch soon.');
+        showSuccessMessage();
       } else {
         console.error('Quiz submission failed:', responseText);
-        alert('There was an error submitting your information. Please try again.');
+        showErrorMessage();
       }
       
     } catch (error) {
       console.error('Quiz submission error:', error);
-      alert('There was an error submitting your information. Please try again.');
+      showErrorMessage();
     }
   }
   
-  // Override all form submissions in the quiz
+  // Function to show success message
+  function showSuccessMessage() {
+    // Create and show a custom success modal/overlay
+    const successOverlay = document.createElement('div');
+    successOverlay.id = 'quiz-success-overlay';
+    successOverlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      font-family: Arial, sans-serif;
+    `;
+    
+    successOverlay.innerHTML = `
+      <div style="
+        background: white;
+        padding: 40px;
+        border-radius: 15px;
+        text-align: center;
+        max-width: 400px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      ">
+        <div style="
+          width: 60px;
+          height: 60px;
+          background: #4CAF50;
+          border-radius: 50%;
+          margin: 0 auto 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        ">
+          <span style="color: white; font-size: 30px;">✓</span>
+        </div>
+        <h2 style="color: #333; margin-bottom: 15px; font-size: 24px;">Thank You!</h2>
+        <p style="color: #666; margin-bottom: 25px; line-height: 1.5;">
+          We've received your information and will contact you shortly for your free consultation.
+        </p>
+        <button onclick="document.getElementById('quiz-success-overlay').remove()" style="
+          background: #4CAF50;
+          color: white;
+          border: none;
+          padding: 12px 30px;
+          border-radius: 25px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: bold;
+        ">
+          Close
+        </button>
+      </div>
+    `;
+    
+    document.body.appendChild(successOverlay);
+  }
+  
+  // Function to show error message
+  function showErrorMessage() {
+    const errorOverlay = document.createElement('div');
+    errorOverlay.id = 'quiz-error-overlay';
+    errorOverlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      font-family: Arial, sans-serif;
+    `;
+    
+    errorOverlay.innerHTML = `
+      <div style="
+        background: white;
+        padding: 40px;
+        border-radius: 15px;
+        text-align: center;
+        max-width: 400px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      ">
+        <div style="
+          width: 60px;
+          height: 60px;
+          background: #f44336;
+          border-radius: 50%;
+          margin: 0 auto 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        ">
+          <span style="color: white; font-size: 30px;">✕</span>
+        </div>
+        <h2 style="color: #333; margin-bottom: 15px; font-size: 24px;">Oops!</h2>
+        <p style="color: #666; margin-bottom: 25px; line-height: 1.5;">
+          There was an error submitting your information. Please try again.
+        </p>
+        <button onclick="document.getElementById('quiz-error-overlay').remove()" style="
+          background: #f44336;
+          color: white;
+          border: none;
+          padding: 12px 30px;
+          border-radius: 25px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: bold;
+        ">
+          Try Again
+        </button>
+      </div>
+    `;
+    
+    document.body.appendChild(errorOverlay);
+  }
+  
+  // Handle quiz submission - only for actual form submissions
   function handleQuizSubmission(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -1051,51 +1175,38 @@ window.$RefreshSig$ = () => (type) => type;</script>
     
     // Ensure we have at least an email
     if (!data.email && !data.email_address) {
-      alert('Please provide your email address.');
+      showErrorMessage();
       return;
     }
     
     submitQuizData(data);
   }
   
-  // Initialize quiz handler
+  // Initialize quiz handler - only attach to actual submit buttons and forms
   function initializeQuizHandler() {
     console.log('Initializing quiz submission handler');
     
     // Find all forms and override their submission
     const forms = document.querySelectorAll('form');
     forms.forEach(form => {
-      // Remove existing event listeners
       form.removeEventListener('submit', handleQuizSubmission);
       form.addEventListener('submit', handleQuizSubmission);
     });
     
-    // Find all submit buttons and override their click
-    const submitSelectors = [
-      'button[type="submit"]',
-      'input[type="submit"]', 
-      'button:not([type])',
-      '.submit-btn',
-      '.quiz-submit',
-      '[onclick*="submit"]',
-      'button:contains("Submit")',
-      'button:contains("Send")',
-      'button:contains("Get")'
-    ];
-    
-    submitSelectors.forEach(selector => {
-      try {
-        const buttons = document.querySelectorAll(selector);
-        buttons.forEach(button => {
-          button.removeEventListener('click', handleQuizSubmission);
-          button.addEventListener('click', handleQuizSubmission);
-        });
-      } catch (e) {
-        // Selector might not be valid, continue
-      }
+    // Only target actual submit buttons within forms
+    const submitButtons = document.querySelectorAll('form button[type="submit"], form input[type="submit"], form .submit-btn, form .quiz-submit');
+    submitButtons.forEach(button => {
+      button.removeEventListener('click', handleQuizSubmission);
+      button.addEventListener('click', function(e) {
+        // Only handle if it's actually a submit button in a form
+        const form = this.closest('form');
+        if (form && (this.type === 'submit' || this.classList.contains('submit-btn') || this.classList.contains('quiz-submit'))) {
+          handleQuizSubmission(e);
+        }
+      });
     });
     
-    console.log('Quiz handler initialized');
+    console.log('Quiz handler initialized for', forms.length, 'forms and', submitButtons.length, 'submit buttons');
   }
   
   // Initialize multiple times to catch dynamic content
