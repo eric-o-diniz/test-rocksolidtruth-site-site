@@ -185,6 +185,7 @@
 
 
 
+
 </head>
 <body>
     <div class="container">
@@ -209,7 +210,7 @@
             <div class="byline">By Eric D. | Updated <span id="dynamicDate"></span></div>
             
             <!-- Single Image Placeholder for simple-news-article -->
-            <img src="https://rocksolid.news/images/drone-image-commercial-roof.jpg" alt="Image" class="article-img-top">
+            <img src="https://rocksolid.news/images/roof-urban-desert.jpg" alt="Image" class="article-img-top">
             <!-- END OF IMAGE PLACEHOLDER -->
 
             <p>Paragraph content. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
@@ -920,16 +921,15 @@ window.$RefreshSig$ = () => (type) => type;</script>
                 
                 // Get project and user info from URL parameters or page data
                 const urlParams = new URLSearchParams(window.location.search);
-                const projectId = '02efe85c-215d-4f2e-97ee-c12deae32ee3' || '02efe85c-215d-4f2e-97ee-c12deae32ee3';
-                const userId = '36b070d6-a5db-44fc-bb51-b5c4746f30fa' || '36b070d6-a5db-44fc-bb51-b5c4746f30fa';
+                const projectId = urlParams.get('projectId') || window.projectId || 'unknown';
+                const userId = urlParams.get('userId') || window.userId || 'unknown';
                 
                 try {
                     // Submit to our edge function
-                    const response = await fetch('https://kcgdexuqztbdewmqmude.supabase.co/functions/v1/process-quiz-submission', {
+                    const response = await fetch('/api/process-quiz-submission', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtjZ2RleHVxenRiZGV3bXFtdWRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzEyNTMwNjMsImV4cCI6MjA0NjgyOTA2M30.pMSaJBHPLWTLqyFiDFWg-E7l1Lj1XAOLLEUu5AzjqB8',
                         },
                         body: JSON.stringify({
                             projectId: projectId,
@@ -957,6 +957,109 @@ window.$RefreshSig$ = () => (type) => type;</script>
     </script>
 </div>
 
+<script>
+(function() {
+  console.log('Quiz submission handler loaded for project:', '02efe85c-215d-4f2e-97ee-c12deae32ee3');
+  
+  // Override all form submissions in the quiz
+  function handleQuizSubmission(event, formData) {
+    event.preventDefault();
+    console.log('Quiz form submission intercepted:', formData);
+    
+    // Prepare submission data
+    const submissionData = {
+      ...formData,
+      projectId: '02efe85c-215d-4f2e-97ee-c12deae32ee3',
+      userId: '36b070d6-a5db-44fc-bb51-b5c4746f30fa',
+      timestamp: new Date().toISOString()
+    };
+    
+    console.log('Submitting quiz data:', submissionData);
+    
+    // Submit to Supabase Edge Function
+    fetch('https://kcgdexuqztbdewmqmude.supabase.co/functions/v1/process-quiz-submission', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtjZ2RleHVxenRiZGV3bXFtdWRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzEyNTMwNjMsImV4cCI6MjA0NjgyOTA2M30.pMSaJBHPLWTLqyFiDFWg-E7l1Lj1XAOLLEUu5AzjqB8'
+      },
+      body: JSON.stringify(submissionData)
+    })
+    .then(response => {
+      console.log('Quiz submission response status:', response.status);
+      return response.json();
+    })
+    .then(data => {
+      console.log('Quiz submission successful:', data);
+      
+      // Show success message or redirect
+      if (typeof showSuccessMessage === 'function') {
+        showSuccessMessage();
+      } else {
+        alert('Thank you for your submission!');
+      }
+    })
+    .catch(error => {
+      console.error('Quiz submission error:', error);
+      alert('There was an error submitting your information. Please try again.');
+    });
+  }
+  
+  // Wait for DOM to be ready
+  function initializeQuizHandler() {
+    console.log('Initializing quiz submission handler');
+    
+    // Find all forms in the quiz and override their submission
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+      form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        console.log('Form submission detected');
+        
+        const formData = new FormData(form);
+        const data = {};
+        for (let [key, value] of formData.entries()) {
+          data[key] = value;
+        }
+        
+        handleQuizSubmission(event, data);
+      });
+    });
+    
+    // Also handle any submit buttons directly
+    const submitButtons = document.querySelectorAll('button[type="submit"], input[type="submit"]');
+    submitButtons.forEach(button => {
+      button.addEventListener('click', function(event) {
+        const form = this.closest('form');
+        if (form) {
+          event.preventDefault();
+          console.log('Submit button clicked');
+          
+          const formData = new FormData(form);
+          const data = {};
+          for (let [key, value] of formData.entries()) {
+            data[key] = value;
+          }
+          
+          handleQuizSubmission(event, data);
+        }
+      });
+    });
+    
+    console.log('Quiz handler initialized with', forms.length, 'forms and', submitButtons.length, 'submit buttons');
+  }
+  
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeQuizHandler);
+  } else {
+    initializeQuizHandler();
+  }
+  
+  // Also try to initialize after a short delay to catch dynamically created elements
+  setTimeout(initializeQuizHandler, 1000);
+})();
+</script>
         <!-- END OF QUIZ -->
 
             <p>Final remarks. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
