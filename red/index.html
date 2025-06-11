@@ -212,9 +212,6 @@ window.$RefreshSig$ = () => (type) => type;</script>
     </style>
 
 
-<!-- Embedded Tracking Code -->
-Testing this tracking code thig!!
-<!-- End Tracking Code -->
 </head>
 <body>
     <div class="container">
@@ -917,23 +914,231 @@ window.$RefreshSig$ = () => (type) => type;</script>
       
       if (response.ok) {
         console.log('Quiz submission successful');
-        alert('Thank you for your submission! We will be in touch soon.');
+        showSuccessMessage();
       } else {
         console.error('Quiz submission failed:', responseText);
-        alert('There was an error submitting your information. Please try again.');
+        showErrorMessage();
       }
       
     } catch (error) {
       console.error('Quiz submission error:', error);
-      alert('There was an error submitting your information. Please try again.');
+      showErrorMessage();
     }
   }
   
-  // Override all form submissions in the quiz
+  // Function to show success message
+  function showSuccessMessage() {
+    const successOverlay = document.createElement('div');
+    successOverlay.id = 'quiz-success-overlay';
+    successOverlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    `;
+    
+    successOverlay.innerHTML = `
+      <div style="
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 50px 40px;
+        border-radius: 20px;
+        text-align: center;
+        max-width: 450px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        position: relative;
+        overflow: hidden;
+      ">
+        <div style="
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+          animation: shimmer 3s ease-in-out infinite;
+        "></div>
+        <div style="
+          width: 80px;
+          height: 80px;
+          background: linear-gradient(135deg, #4CAF50, #45a049);
+          border-radius: 50%;
+          margin: 0 auto 25px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+          position: relative;
+        ">
+          <span style="color: white; font-size: 40px; font-weight: bold;">✓</span>
+        </div>
+        <h2 style="
+          color: white; 
+          margin-bottom: 20px; 
+          font-size: 28px; 
+          font-weight: 700;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        ">Thank You!</h2>
+        <p style="
+          color: rgba(255,255,255,0.9); 
+          margin-bottom: 30px; 
+          line-height: 1.6;
+          font-size: 16px;
+        ">
+          We've received your information and will contact you shortly for your free consultation.
+        </p>
+        <button onclick="document.getElementById('quiz-success-overlay').remove()" style="
+          background: linear-gradient(135deg, #fff, #f8f9fa);
+          color: #333;
+          border: none;
+          padding: 15px 35px;
+          border-radius: 30px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+          transition: all 0.3s ease;
+          transform: translateY(0);
+        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 5px 15px rgba(0,0,0,0.2)'">
+          Close
+        </button>
+      </div>
+      <style>
+        @keyframes shimmer {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      </style>
+    `;
+    
+    document.body.appendChild(successOverlay);
+  }
+  
+  // Function to show error message
+  function showErrorMessage() {
+    const errorOverlay = document.createElement('div');
+    errorOverlay.id = 'quiz-error-overlay';
+    errorOverlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    `;
+    
+    errorOverlay.innerHTML = `
+      <div style="
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        padding: 50px 40px;
+        border-radius: 20px;
+        text-align: center;
+        max-width: 450px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      ">
+        <div style="
+          width: 80px;
+          height: 80px;
+          background: rgba(255,255,255,0.2);
+          border-radius: 50%;
+          margin: 0 auto 25px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        ">
+          <span style="color: white; font-size: 40px; font-weight: bold;">✕</span>
+        </div>
+        <h2 style="
+          color: white; 
+          margin-bottom: 20px; 
+          font-size: 28px; 
+          font-weight: 700;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        ">Oops!</h2>
+        <p style="
+          color: rgba(255,255,255,0.9); 
+          margin-bottom: 30px; 
+          line-height: 1.6;
+          font-size: 16px;
+        ">
+          There was an error submitting your information. Please try again.
+        </p>
+        <button onclick="document.getElementById('quiz-error-overlay').remove()" style="
+          background: linear-gradient(135deg, #fff, #f8f9fa);
+          color: #333;
+          border: none;
+          padding: 15px 35px;
+          border-radius: 30px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+          transition: all 0.3s ease;
+        " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+          Try Again
+        </button>
+      </div>
+    `;
+    
+    document.body.appendChild(errorOverlay);
+  }
+  
+  // Handle quiz submission - ONLY for actual submit buttons in forms
   function handleQuizSubmission(event) {
+    console.log('Form submission intercepted, event target:', event.target);
+    
+    // Only handle if it's actually a form submission or a submit button
+    const isFormSubmission = event.type === 'submit' && event.target.tagName === 'FORM';
+    const isSubmitButton = event.target.type === 'submit' || 
+                          event.target.classList.contains('submit-btn') || 
+                          event.target.classList.contains('quiz-submit') ||
+                          (event.target.tagName === 'BUTTON' && event.target.textContent && event.target.textContent.toLowerCase().includes('submit'));
+    
+    console.log('Is form submission:', isFormSubmission, 'Is submit button:', isSubmitButton);
+    
+    if (!isFormSubmission && !isSubmitButton) {
+      console.log('Not a quiz submission, ignoring');
+      return;
+    }
+    
+    // Skip if this is a privacy policy link, close button, or navigation element
+    const target = event.target;
+    const targetText = target.textContent?.toLowerCase() || '';
+    const targetClass = target.className || '';
+    const targetId = target.id || '';
+    
+    // List of elements that should NOT trigger quiz submission
+    const skipElements = [
+      'privacy', 'policy', 'terms', 'close', 'cancel', 'back', 'previous', 'next', 'continue',
+      'x', '×', '✕', 'exit', 'dismiss', 'skip'
+    ];
+    
+    const shouldSkip = skipElements.some(skip => 
+      targetText.includes(skip) || 
+      targetClass.includes(skip) || 
+      targetId.includes(skip) ||
+      target.getAttribute('aria-label')?.toLowerCase().includes(skip)
+    );
+    
+    if (shouldSkip) {
+      console.log('Skipping submission for navigation/control element:', targetText);
+      return;
+    }
+    
     event.preventDefault();
     event.stopPropagation();
-    console.log('Form submission intercepted');
+    console.log('Processing quiz submission');
     
     const form = event.target.closest('form') || document.querySelector('form');
     let data = {};
@@ -945,7 +1150,7 @@ window.$RefreshSig$ = () => (type) => type;</script>
       }
     }
     
-    // Also collect data from radio buttons and checkboxes
+    // Collect data from radio buttons and checkboxes
     const radioButtons = document.querySelectorAll('input[type="radio"]:checked');
     radioButtons.forEach(radio => {
       data[radio.name] = radio.value;
@@ -977,51 +1182,41 @@ window.$RefreshSig$ = () => (type) => type;</script>
     
     // Ensure we have at least an email
     if (!data.email && !data.email_address) {
-      alert('Please provide your email address.');
+      showErrorMessage();
       return;
     }
     
     submitQuizData(data);
   }
   
-  // Initialize quiz handler
+  // Initialize quiz handler - be very specific about what we attach to
   function initializeQuizHandler() {
     console.log('Initializing quiz submission handler');
     
-    // Find all forms and override their submission
-    const forms = document.querySelectorAll('form');
-    forms.forEach(form => {
-      // Remove existing event listeners
-      form.removeEventListener('submit', handleQuizSubmission);
-      form.addEventListener('submit', handleQuizSubmission);
-    });
+    // Remove any existing listeners first
+    document.removeEventListener('submit', handleQuizSubmission, true);
+    document.removeEventListener('click', handleQuizSubmission, true);
     
-    // Find all submit buttons and override their click
-    const submitSelectors = [
-      'button[type="submit"]',
-      'input[type="submit"]', 
-      'button:not([type])',
-      '.submit-btn',
-      '.quiz-submit',
-      '[onclick*="submit"]',
-      'button:contains("Submit")',
-      'button:contains("Send")',
-      'button:contains("Get")'
-    ];
+    // Only attach to form submit events
+    document.addEventListener('submit', handleQuizSubmission, true);
     
-    submitSelectors.forEach(selector => {
-      try {
-        const buttons = document.querySelectorAll(selector);
-        buttons.forEach(button => {
-          button.removeEventListener('click', handleQuizSubmission);
-          button.addEventListener('click', handleQuizSubmission);
-        });
-      } catch (e) {
-        // Selector might not be valid, continue
+    // Only attach click handler to actual submit buttons
+    const submitButtons = document.querySelectorAll('button[type="submit"], input[type="submit"], .submit-btn, .quiz-submit');
+    submitButtons.forEach(button => {
+      // Skip if it's clearly a navigation or control button
+      const buttonText = button.textContent?.toLowerCase() || '';
+      const skipButtons = ['privacy', 'policy', 'terms', 'close', 'cancel', 'back', 'next', 'continue', 'x', '×', '✕'];
+      
+      if (skipButtons.some(skip => buttonText.includes(skip))) {
+        console.log('Skipping button:', buttonText);
+        return;
       }
+      
+      button.removeEventListener('click', handleQuizSubmission);
+      button.addEventListener('click', handleQuizSubmission);
     });
     
-    console.log('Quiz handler initialized');
+    console.log('Quiz handler initialized for submit buttons only');
   }
   
   // Initialize multiple times to catch dynamic content
