@@ -185,10 +185,6 @@
 
 
 
-
-
-
-
 </head>
 <body>
     <div class="container">
@@ -230,19 +226,28 @@
           console.log('Submitting quiz form with data:', formData);
           
           try {
+            // Prepare data in the format expected by the edge function
             const submissionData = {
               projectId: '02efe85c-215d-4f2e-97ee-c12deae32ee3',
               userId: '36b070d6-a5db-44fc-bb51-b5c4746f30fa',
-              name: formData.get('name') || '',
+              name: formData.get('full_name') || formData.get('name') || '',
               email: formData.get('email') || '',
               phone: formData.get('phone') || '',
-              quizAnswers: Object.fromEntries(formData.entries()),
+              quizAnswers: {
+                homeowner: formData.get('homeowner'),
+                roof_age: formData.get('roof_age'),
+                reason: formData.getAll('reason[]').join(', '),
+                zip_code: formData.get('zip_code'),
+                full_name: formData.get('full_name'),
+                email: formData.get('email'),
+                phone: formData.get('phone')
+              },
               timestamp: new Date().toISOString()
             };
             
             console.log('Prepared submission data:', submissionData);
             
-            const response = await fetch('/api/functions/v1/process-quiz-submission', {
+            const response = await fetch('https://kcgdexuqztbdewmqmude.supabase.co/functions/v1/process-quiz-submission', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -805,8 +810,6 @@ window.$RefreshSig$ = () => (type) => type;</script>
     </style>
 
     <script>
-        console.log('Quiz loaded with projectId:', '02efe85c-215d-4f2e-97ee-c12deae32ee3', 'userId:', '36b070d6-a5db-44fc-bb51-b5c4746f30fa');
-        
         (function() {
             let quizCurrentStep = 1;
             const quizTotalSteps = 7;
@@ -976,7 +979,7 @@ window.$RefreshSig$ = () => (type) => type;</script>
                 
                 try {
                     // Submit to our edge function
-                    const response = await fetch('/api/process-quiz-submission', {
+                    const response = await fetch('https://kcgdexuqztbdewmqmude.supabase.co/functions/v1/process-quiz-submission', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
