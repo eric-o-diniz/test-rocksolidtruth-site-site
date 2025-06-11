@@ -183,6 +183,7 @@
     </style>
 
 
+
 </head>
 <body>
     <div class="container">
@@ -207,7 +208,7 @@
             <div class="byline">By Eric D. | Updated <span id="dynamicDate"></span></div>
             
             <!-- Single Image Placeholder for simple-news-article -->
-            <img src="https://rocksolid.news/images/metal-black-installation.jpg" alt="Image" class="article-img-top">
+            <img src="https://rocksolid.news/images/shingle-roof-2.jpg" alt="Image" class="article-img-top">
             <!-- END OF IMAGE PLACEHOLDER -->
 
             <p>Paragraph content. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
@@ -218,11 +219,8 @@
 
             <p>Summary content. Lorem ipsum dolor sit amet, consectetur adipiscing elit, <span class="highlight">highlighted text</span> sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
 <!-- INJECT QUIZ HERE -->
-<script type="module">import { injectIntoGlobalHook } from "/@react-refresh";
-injectIntoGlobalHook(window);
-window.$RefreshReg$ = () => {};
-window.$RefreshSig$ = () => (type) => type;</script>
-<script type="module" src="/@vite/client"></script>
+
+
 <div class="quiz-overlay">
     <div class="quiz-header">
         <!-- Progress Bar -->
@@ -753,209 +751,140 @@ window.$RefreshSig$ = () => (type) => type;</script>
         }
     </style>
 
-    <script>
-        (function() {
-            let quizCurrentStep = 1;
-            const quizTotalSteps = 7;
-
-            function updateQuizProgress(step) {
-                const progressBar = document.querySelector('#quiz-progress-bar');
-                if (!progressBar) return;
-                const stepIndicators = document.querySelectorAll('.quiz-overlay .step');
-                
-                const progressPercent = (step / quizTotalSteps) * 100;
-                progressBar.style.width = progressPercent + '%';
-                
-                stepIndicators.forEach(indicator => {
-                    const indicatorStep = parseInt(indicator.getAttribute('data-step'));
-                    if (indicatorStep <= step) {
-                        indicator.classList.add('active');
-                    } else {
-                        indicator.classList.remove('active');
-                    }
-                });
-            }
-            
-            function showQuizStep(step) {
-                const steps = document.querySelectorAll(".quiz-overlay .quiz-step");
-                steps.forEach(item => {
-                    if (parseInt(item.getAttribute("data-step")) === step) {
-                        item.classList.add("active");
-                    } else {
-                        item.classList.remove("active");
-                    }
-                });
-                
-                quizCurrentStep = step;
-                updateQuizProgress(step);
-            }
-            
-            function selectQuizOption(element, name, value, nextStep) {
-                const options = document.querySelectorAll(`.quiz-overlay input[name="${name}"]`);
-                options.forEach(option => {
-                    option.parentElement.classList.remove('selected');
-                });
-                
-                element.classList.add('selected');
-                const input = element.querySelector('input');
-                input.checked = true;
-                
-                if (quizCurrentStep === 1 || quizCurrentStep === 2) {
-                    nextQuizStep(nextStep);
-                }
-            }
-            
-            function toggleQuizCheckbox(element, name, value) {
-                const otherOption = document.getElementById('reason-other');
-                const checkboxes = document.querySelectorAll(`input[name="${name}[]"]`);
-                if (value === 'Other') {
-                    checkboxes.forEach(checkbox => {
-                        if (checkbox.value !== 'Other') {
-                            checkbox.checked = false;
-                            checkbox.parentElement.classList.remove('selected');
-                        }
-                    });
-                } else if (otherOption.checked) {
-                    otherOption.checked = false;
-                    otherOption.parentElement.classList.remove('selected');
-                }
-                const input = element.querySelector('input');
-                input.checked = !input.checked;
-                element.classList.toggle('selected', input.checked);
-            }
-            
-            function nextQuizStep(nextStep) {
-                const currentStepElement = document.querySelector(`.quiz-overlay .quiz-step[data-step="${quizCurrentStep}"]`);
-                const inputs = currentStepElement.querySelectorAll("input[required]");
-                let isValid = true;
-                
-                if (quizCurrentStep === 3) {
-                    const checked = currentStepElement.querySelectorAll(`input[name="reason[]"]:checked`).length;
-                    isValid = checked > 0;
-                } else {
-                    inputs.forEach(input => {
-                        if (input.type === "radio" && !currentStepElement.querySelector(`input[name="${input.name}"]:checked`)) {
-                            isValid = false;
-                        } else if (input.type === "checkbox" && !input.checked) {
-                            isValid = false;
-                        } else if (!input.value.trim()) {
-                            isValid = false;
-                        } else if (input.name === "zip_code" && !/^\d{5}$/.test(input.value)) {
-                            isValid = false;
-                        } else if (input.type === "email" && !/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(input.value)) {
-                            isValid = false;
-                        }
-                    });
-                }
-                
-                const errorNote = currentStepElement.querySelector(".quiz-error");
-                if (isValid) {
-                    errorNote.style.display = "none";
-                    showQuizStep(nextStep);
-                } else {
-                    errorNote.style.display = "flex";
-                }
-            }
-            
-            function prevQuizStep(prevStep) {
-                const currentStepElement = document.querySelector(`.quiz-overlay .quiz-step[data-step="${quizCurrentStep}"]`);
-                currentStepElement.querySelector(".quiz-error").style.display = "none";
-                showQuizStep(prevStep);
-            }
-            
-            function formatQuizPhoneNumber(input) {
-                let numbers = input.value.replace(/\D/g, '');
-                if (numbers.length > 10) {
-                    numbers = numbers.slice(0, 10);
-                }
-                let formatted = '';
-                if (numbers.length > 0) {
-                    formatted = '(' + numbers.substring(0, 3);
-                    if (numbers.length >= 4) {
-                        formatted += ') ' + numbers.substring(3, 6);
-                    }
-                    if (numbers.length >= 7) {
-                        formatted += '-' + numbers.substring(6, 10);
-                    }
-                }
-                input.value = formatted;
-            }
-            
-            window.selectQuizOption = selectQuizOption;
-            window.toggleQuizCheckbox = toggleQuizCheckbox;
-            window.nextQuizStep = nextQuizStep;
-            window.prevQuizStep = prevQuizStep;
-            window.formatQuizPhoneNumber = formatQuizPhoneNumber;
-            
-            function initQuiz() {
-                showQuizStep(1);
-            }
-            
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initQuiz);
-            } else {
-                initQuiz();
-            }
-            
-            // Add form submission handler
-            document.getElementById('quiz-form').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(this);
-                const quizAnswers = {};
-                const contactInfo = {};
-                
-                // Collect quiz answers
-                quizAnswers['Homeowner'] = formData.get('homeowner');
-                quizAnswers['Roof Age'] = formData.get('roof_age');
-                quizAnswers['Reason'] = Array.from(formData.getAll('reason[]')).join(', ');
-                quizAnswers['ZIP Code'] = formData.get('zip_code');
-                
-                // Collect contact info
-                contactInfo.name = formData.get('full_name');
-                contactInfo.email = formData.get('email');
-                contactInfo.phone = formData.get('phone');
-                
-                
-                // Get project and user info from injected values
-                const projectId = '02efe85c-215d-4f2e-97ee-c12deae32ee3';
-                const userId = '36b070d6-a5db-44fc-bb51-b5c4746f30fa';
-                
-                try {
-                    // Submit to our edge function with correct data structure
-                    const response = await fetch('https://kcgdexuqztbdewmqmude.supabase.co/functions/v1/process-quiz-submission', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            projectId: projectId,
-                            userId: userId,
-                            name: contactInfo.name,
-                            email: contactInfo.email,
-                            phone: contactInfo.phone,
-                            quizAnswers: quizAnswers,
-                            timestamp: new Date().toISOString()
-                        })
-                    });
-                    
-                    if (response.ok) {
-                        // Show success message or redirect
-                        alert('Thank you! We have received your information and will contact you shortly.');
-                    } else {
-                        const errorData = await response.json();
-                        console.error('Submission failed with response:', errorData);
-                        throw new Error('Failed to submit quiz');
-                    }
-                } catch (error) {
-                    console.error('Error submitting quiz:', error);
-                    alert('There was an error submitting your information. Please try again.');
-                }
-            });
-        })();
-    </script>
+    
 </div>
 
+<script>
+(function() {
+  const CORRECT_ENDPOINT = 'https://kcgdexuqztbdewmqmude.supabase.co/functions/v1/process-quiz-submission';
+  const PROJECT_ID = '02efe85c-215d-4f2e-97ee-c12deae32ee3';
+  const USER_ID = '36b070d6-a5db-44fc-bb51-b5c4746f30fa';
+  const AUTH_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtjZ2RleHVxenRiZGV3bXFtdWRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzEyNTMwNjMsImV4cCI6MjA0NjgyOTA2M30.pMSaJBHPLWTLqyFiDFWg-E7l1Lj1XAOLLEUu5AzjqB8';
+  
+  // Override window.fetch to intercept quiz submissions
+  const originalFetch = window.fetch;
+  window.fetch = function(url, options) {
+    if (typeof url === 'string' && url.includes('process-quiz-submission')) {
+      console.log('Intercepted quiz submission, redirecting to correct endpoint');
+      return originalFetch(CORRECT_ENDPOINT, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + AUTH_TOKEN,
+          ...(options?.headers || {})
+        }
+      });
+    }
+    return originalFetch(url, options);
+  };
+  
+  // Wait for DOM to be ready
+  function initQuizOverride() {
+    // Override any existing form submission handlers
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+      form.addEventListener('submit', function(e) {
+        if (this.querySelector('input[type="email"]')) {
+          e.preventDefault();
+          e.stopPropagation();
+          handleQuizSubmission(this);
+        }
+      }, true);
+    });
+    
+    // Override button click handlers
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+      if (button.textContent && (button.textContent.includes('Submit') || button.textContent.includes('Get') || button.textContent.includes('Quote'))) {
+        button.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const form = this.closest('form') || document.querySelector('form');
+          if (form) {
+            handleQuizSubmission(form);
+          }
+        }, true);
+      }
+    });
+  }
+  
+  async function handleQuizSubmission(form) {
+    try {
+      console.log('Handling quiz submission with override');
+      
+      // Extract form data
+      const formData = new FormData(form);
+      const contactInfo = {
+        name: formData.get('name') || formData.get('fullName') || '',
+        email: formData.get('email') || '',
+        phone: formData.get('phone') || ''
+      };
+      
+      // Extract quiz answers (look for any quiz-related data)
+      const quizAnswers = {};
+      Array.from(formData.entries()).forEach(([key, value]) => {
+        if (key !== 'name' && key !== 'fullName' && key !== 'email' && key !== 'phone') {
+          quizAnswers[key] = value;
+        }
+      });
+      
+      // Also check for any globally stored quiz data
+      if (window.quizAnswers) {
+        Object.assign(quizAnswers, window.quizAnswers);
+      }
+      
+      console.log('Submitting quiz with data:', { contactInfo, quizAnswers, projectId: PROJECT_ID, userId: USER_ID });
+      
+      const response = await fetch(CORRECT_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + AUTH_TOKEN
+        },
+        body: JSON.stringify({
+          projectId: PROJECT_ID,
+          userId: USER_ID,
+          name: contactInfo.name,
+          email: contactInfo.email,
+          phone: contactInfo.phone,
+          quizAnswers: quizAnswers,
+          timestamp: new Date().toISOString()
+        })
+      });
+      
+      console.log('Response status:', response.status);
+      const responseText = await response.text();
+      console.log('Response text:', responseText);
+      
+      if (response.ok) {
+        alert('Thank you! We have received your information and will contact you shortly.');
+        // Close any modals
+        const modals = document.querySelectorAll('.modal, [role="dialog"]');
+        modals.forEach(modal => {
+          if (modal.style) modal.style.display = 'none';
+        });
+        // Reset form
+        if (form.reset) form.reset();
+      } else {
+        throw new Error('Server returned error: ' + response.status);
+      }
+    } catch (error) {
+      console.error('Error submitting quiz:', error);
+      alert('There was an error submitting your information. Please try again.');
+    }
+  }
+  
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initQuizOverride);
+  } else {
+    initQuizOverride();
+  }
+  
+  // Also initialize with a delay to catch dynamically added elements
+  setTimeout(initQuizOverride, 1000);
+})();
+</script>
         <!-- END OF QUIZ -->
 
             <p>Final remarks. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
