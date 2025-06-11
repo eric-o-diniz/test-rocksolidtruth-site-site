@@ -183,9 +183,6 @@
     </style>
 
 
-
-
-
 </head>
 <body>
     <div class="container">
@@ -210,7 +207,7 @@
             <div class="byline">By Eric D. | Updated <span id="dynamicDate"></span></div>
             
             <!-- Single Image Placeholder for simple-news-article -->
-            <img src="https://rocksolid.news/images/broken-tile-roof.png" alt="Image" class="article-img-top">
+            <img src="https://rocksolid.news/images/metal-black-installation.jpg" alt="Image" class="article-img-top">
             <!-- END OF IMAGE PLACEHOLDER -->
 
             <p>Paragraph content. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
@@ -946,6 +943,8 @@ window.$RefreshSig$ = () => (type) => type;</script>
                         // Show success message or redirect
                         alert('Thank you! We have received your information and will contact you shortly.');
                     } else {
+                        const errorData = await response.json();
+                        console.error('Submission failed with response:', errorData);
                         throw new Error('Failed to submit quiz');
                     }
                 } catch (error) {
